@@ -3,7 +3,7 @@
 
 Name:           sirius-os-winboat
 Version:        0.9.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Repackaged Winboat optimized for Sirius-OS (Bazzite-based)
 License:        GPLv3
 URL:            https://github.com/jonathonp3/sirius-os-repackage
@@ -34,16 +34,21 @@ rpm2cpio %{SOURCE0} | cpio -idmv
 mkdir -p %{buildroot}%{_libexecdir}/winboat
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/applications
+mkdir -p %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
 mkdir -p %{buildroot}%{_prefix}/lib/tmpfiles.d
 
 # 2. Copy the files from the extracted 'opt/winboat' folder
 # The %setup -c above ensures we are in the right spot
 cp -rp opt/winboat/* %{buildroot}%{_libexecdir}/winboat/
 
-# 3. Create the standard binary link
+# 3. Copy the icon from the extracted RPM structure
+# Based on the logs, it lives in usr/share/icons/hicolor/scalable/apps/
+cp -p usr/share/icons/hicolor/scalable/apps/winboat.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/
+
+# 4. Create the standard binary link
 ln -sf %{_libexecdir}/winboat/winboat %{buildroot}%{_bindir}/winboat
 
-# 4. Create the Desktop Entry
+# 5. Create the Desktop Entry
 cat <<EOF > %{buildroot}%{_datadir}/applications/winboat.desktop
 [Desktop Entry]
 Name=Winboat
@@ -55,7 +60,7 @@ Type=Application
 Categories=Utility;Game;
 EOF
 
-# 5. Create the tmpfiles.d entry
+# 6. Create the tmpfiles.d entry
 cat <<EOF > %{buildroot}%{_prefix}/lib/tmpfiles.d/sirius-os-winboat.conf
 # Winboat legacy compatibility for Bazzite/Sirius-OS
 L+ /opt/winboat - - - - %{_libexecdir}/winboat
@@ -69,6 +74,10 @@ EOF
 %{_prefix}/lib/tmpfiles.d/sirius-os-winboat.conf
 
 %changelog
+* Mon Jul 06 2026 Jonathon <jonathon@sirius-os> - 0.9.0-2
+- Fix: included missing winboat.svg icon
+- Improved directory structure for hicolor icons
+
 * Mon Jul 06 2026 Jonathon <jonathon@sirius-os> - 0.9.0-1
 - Initial release of repackaged winboat
 
