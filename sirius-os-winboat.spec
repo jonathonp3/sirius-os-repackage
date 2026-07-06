@@ -7,8 +7,6 @@ Release:        1%{?dist}
 Summary:        Repackaged Winboat optimized for Sirius-OS (Bazzite-based)
 License:        GPLv3
 URL:            https://github.com/jonathonp3/sirius-os-repackage
-
-# ExclusiveArch tells COPR this ONLY builds on x86_64
 ExclusiveArch:  x86_64
 
 Source0:        https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
@@ -23,24 +21,28 @@ Requires:       libXScrnSaver
 AutoReqProv:    no
 
 %description
-Repackaged Winboat optimized for Sirius-OS and Wolf-OS. 
-Places the immutable application 'truth' in /usr/libexec/winboat 
-to comply with Fedora Atomic standards and manages the legacy 
-/opt/winboat link via tmpfiles.d.
+Repackaged Winboat optimized for Sirius-OS and Wolf-OS.
 
 %prep
-# Extract the original binary RPM
+# Create a build directory and extract the RPM into it
+%setup -c -T
 rpm2cpio %{SOURCE0} | cpio -idmv
 
 %install
+# 1. Create the necessary directory structure
 mkdir -p %{buildroot}%{_libexecdir}/winboat
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/applications
 mkdir -p %{buildroot}%{_prefix}/lib/tmpfiles.d
 
+# 2. Copy the files from the extracted 'opt/winboat' folder
+# The %setup -c above ensures we are in the right spot
 cp -rp opt/winboat/* %{buildroot}%{_libexecdir}/winboat/
+
+# 3. Create the standard binary link
 ln -sf %{_libexecdir}/winboat/winboat %{buildroot}%{_bindir}/winboat
 
+# 4. Create the Desktop Entry
 cat <<EOF > %{buildroot}%{_datadir}/applications/winboat.desktop
 [Desktop Entry]
 Name=Winboat
@@ -52,6 +54,7 @@ Type=Application
 Categories=Utility;Game;
 EOF
 
+# 5. Create the tmpfiles.d entry
 cat <<EOF > %{buildroot}%{_prefix}/lib/tmpfiles.d/sirius-os-winboat.conf
 # Winboat legacy compatibility for Bazzite/Sirius-OS
 L+ /opt/winboat - - - - %{_libexecdir}/winboat
