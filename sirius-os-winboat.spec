@@ -7,7 +7,7 @@ URL:            https://github.com/jonathonp3/sirius-os-repackage
 BuildArch:      x86_64
 
 # This tells COPR to download the original binary RPM directly from GitHub
-Source0:        https://github.com/TibixDev/winboat/releases/latest/download/winboat-x86_64.rpm
+Source0:        https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
 
 # --- DEPENDENCIES ---
 # Tools needed to unpack the Source0 RPM during the build process
