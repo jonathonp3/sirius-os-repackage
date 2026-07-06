@@ -11,8 +11,9 @@ ExclusiveArch:  x86_64
 
 Source0:        https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
 
+# CORRECTED: Use 'rpm' instead of 'rpm2cpio'
 BuildRequires:  cpio
-BuildRequires:  rpm2cpio
+BuildRequires:  rpm
 
 Requires:       freerdp
 Requires:       libwinpr
